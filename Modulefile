@@ -1,4 +1,4 @@
-name    'puppet-gitlist'
+name    'eshamow-gitlist'
 version '0.1.0'
 source 'UNKNOWN'
 author 'puppet'
@@ -8,6 +8,5 @@ description 'UNKNOWN'
 project_page 'UNKNOWN'
 
 ## Add dependencies, if any:
-# dependency 'username/name', '>= 1.2.0'
 dependency 'puppetlabs/apache', '>= 0.10.0'
 dependency 'nanliu/staging', '>= 0.3.1'

@@ -37,63 +37,62 @@
 #
 #NOTE: REQUIRES APACHE+PHP ALREADY CONFIGURED
 class gitlist (
-  $webdir          = $gitlist::params::webdir,
-  $webuser         = $gitlist::params::webuser,
-  $webgroup        = $gitlist::params::webgroup,
-  $restart_apache  = false,
-  $apache_service  = $gitlist::params::apache_service,
-  $apache_confdir  = $gitlist::params::apache_confdir,
-  $client          = $gitlist::params::client,
-  $default_branch  = $gitlist::params::default_branch,
-  $repositories    = $gitlist::params::repositories,
-  $debug           = $gitlist::params::debug,
-  $cache           = $gitlist::params::cache,
-  $download        = true,
-  $source_location = 'https://s3.amazonaws.com/gitlist/gitlist-0.4.0.tar.gz',
+  $webdir_path       = $gitlist::params::webdir_path,
+  $webuser_name      = $gitlist::params::webuser_name,
+  $webgroup_name     = $gitlist::params::webgroup_name,
+  $restart_service   = $gitlist::params::restart_service,
+  $webservice_name   = $gitlist::params::webservice_name,
+  $apache_confdir    = $gitlist::params::apache_confdir,
+  $git_client_path   = $gitlist::params::git_client_path,
+  $default_branch    = $gitlist::params::default_branch,
+  $repositories_path = $gitlist::params::repositories_path,
+  $debug             = $gitlist::params::debug,
+  $cache             = $gitlist::params::cache,
+  $download_source   = $gitlist::params::download_source,
+  $source_location   = $gitlist::params::source_location
 ) inherits gitlist::params {
-  if $source_location == undef {
-    if $download == false {
-      fail('gitlist: If download is set to false, you must set $source_location.')
-    }
+  if $source_location == undef and $download_source == false {
+    fail('gitlist: If download is set to false, you must set $source_location.')
   }
 
-  $apache_notify = $restart_apache ? {
-    true  => Service[$apache_service],
+  $apache_notify = $restart_service ? {
+    true  => Service[$webservice_name],
     default => undef,
   }
+
   staging::file { 'gitlist.tar.gz':
     source => $source_location,
   } ~>
   staging::extract { 'gitlist.tar.gz':
-    target => "${webdir}/",
-    creates => "${webdir}/gitlist"
+    target  => "${webdir_path}/",
+    creates => "${webdir_path}/gitlist"
   } ->
-  file { "${webdir}/gitlist":
+  file { "${webdir_path}/gitlist":
     ensure  => directory,
     recurse => true,
-    owner   => $webuser,
-    group   => $webgroup,
+    owner   => $webuser_name,
+    group   => $webgroup_name,
   }
-  file { "${webdir}/gitlist/cache":
+  file { "${webdir_path}/gitlist/cache":
     ensure => directory,
-    owner  => $webuser,
-    group  => $webgroup,
+    owner  => $webuser_name,
+    group  => $webgroup_name,
     mode   => '0750',
   }
-  file { "${webdir}/gitlist/config.ini":
+  file { "${webdir_path}/gitlist/config.ini":
     content => template('gitlist/config.ini.erb'),
-    owner   => $webuser,
-    group   => $webgroup,
+    owner   => $webuser_name,
+    group   => $webgroup_name,
   }
-  file { "${webdir}/gitlist/.htaccess":
+  file { "${webdir_path}/gitlist/.htaccess":
     content => template('gitlist/htaccess.erb'),
   }
   file { "${apache_confdir}/gitlist.conf":
-    ensure => file,
-    owner  => $webuser,
+    ensure  => file,
+    owner   => $webuser_name,
     content => template('gitlist/gitlist.conf.erb'),
-    group  => $webgroup,
-    mode   => '0750',
-    notify => $apache_notify,
+    group   => $webgroup_name,
+    mode    => '0750',
+    notify  => $apache_notify,
   }
 }

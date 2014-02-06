@@ -35,7 +35,65 @@
 #
 # Copyright 2014 Your name here, unless otherwise noted.
 #
-class gitlist {
+#NOTE: REQUIRES APACHE+PHP ALREADY CONFIGURED
+class gitlist (
+  $webdir          = $gitlist::params::webdir,
+  $webuser         = $gitlist::params::webuser,
+  $webgroup        = $gitlist::params::webgroup,
+  $restart_apache  = false,
+  $apache_service  = $gitlist::params::apache_service,
+  $apache_confdir  = $gitlist::params::apache_confdir,
+  $client          = $gitlist::params::client,
+  $default_branch  = $gitlist::params::default_branch,
+  $repositories    = $gitlist::params::repositories,
+  $debug           = $gitlist::params::debug,
+  $cache           = $gitlist::params::cache,
+  $download        = true,
+  $source_location = 'https://s3.amazonaws.com/gitlist/gitlist-0.4.0.tar.gz',
+) inherits gitlist::params {
+  if $source_location == undef {
+    if $download == false {
+      fail('gitlist: If download is set to false, you must set $source_location.')
+    }
+  }
 
-
+  $apache_notify = $restart_apache ? {
+    true  => Service[$apache_service],
+    default => undef,
+  }
+  staging::file { 'gitlist.tar.gz':
+    source => $source_location,
+  } ~>
+  staging::extract { 'gitlist.tar.gz':
+    target => "${webdir}/",
+    creates => "${webdir}/gitlist"
+  } ->
+  file { "${webdir}/gitlist":
+    ensure  => directory,
+    recurse => true,
+    owner   => $webuser,
+    group   => $webgroup,
+  }
+  file { "${webdir}/gitlist/cache":
+    ensure => directory,
+    owner  => $webuser,
+    group  => $webgroup,
+    mode   => '0750',
+  }
+  file { "${webdir}/gitlist/config.ini":
+    content => template('gitlist/config.ini.erb'),
+    owner   => $webuser,
+    group   => $webgroup,
+  }
+  file { "${webdir}/gitlist/.htaccess":
+    content => template('gitlist/htaccess.erb'),
+  }
+  file { "${apache_confdir}/gitlist.conf":
+    ensure => file,
+    owner  => $webuser,
+    content => template('gitlist/gitlist.conf.erb'),
+    group  => $webgroup,
+    mode   => '0750',
+    notify => $apache_notify,
+  }
 }

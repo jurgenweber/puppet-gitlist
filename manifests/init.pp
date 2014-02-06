@@ -1,41 +1,62 @@
 # == Class: gitlist
 #
-# Full description of class gitlist here.
+# Installs gitlist web interface. This works quite will with the
+# eshamow-gitolite module to build a full git stack. Module expects that
+# puppetlabs-apache is applied to the target node.
 #
 # === Parameters
 #
-# Document parameters here.
-#
-# [*sample_parameter*]
-#   Explanation of what this parameter affects and what it defaults to.
-#   e.g. "Specify one or more upstream ntp servers as an array."
-#
-# === Variables
-#
-# Here you should define a list of variables that this module would require.
-#
-# [*sample_variable*]
-#   Explanation of how this variable affects the funtion of this class and if
-#   it has a default. e.g. "The parameter enc_ntp_servers must be set by the
-#   External Node Classifier as a comma separated list of hostnames." (Note,
-#   global variables should be avoided in favor of class parameters as
-#   of Puppet 2.6.)
+# [*webdir_path*]
+#   Directory for web server root. Defaults to '/var/www/html'
+# [*webuser_name*]
+#   Username under which the webserver user runs. Defaults to 'apache'
+# [*webgroup_name*]
+#   Group name under which the webserver user runs. Defaults to 'apache'
+# [*restart_service*]
+#   Boolean. If set to 'true' the module will restart the service specified
+#   in webservice_name. Defaults to false.
+# [*webservice_name*]
+#   Name of the service to kick if restart_service is set to true. Defaults to
+#   'httpd.'
+# [*apache_confdir*]
+#   Directory into which we can drop configuration snippet for webserver.
+#   Defaults to '/etc/httpd/conf.d'
+# [*git_client_path*]
+#   Path to git binary. Defaults to '/usr/bin/git.'
+# [*default_branch*]
+#   Default branch to check for each repo. Defaults to 'master.'
+# [*repositories_path*]
+#   Path of parent directory for git repositories. Defaults to
+#   '/home/git/repositories.'
+# [*debug*]
+#   Passed through to gitlist config, sets debug mode to true. Defaults to
+#   'false.'
+# [*cache*]
+#   Turn on caching. Defaults to 'true.'
+# [*download_source*]
+#   Boolean to indicate whether or not the source tarball should be downloaded.
+#   Defaults to false.
+# [*source_location*]
+#   Location of a tarball containing the gitlist code. Can be any format
+#   accepted by the nanliu-staging module. Defaults to
+#   'https://s3.amazonaws.com/gitlist/gitlist-0.4.0.tar.gz'
 #
 # === Examples
 #
 #  class { gitlist:
-#    servers => [ 'pool.ntp.org', 'ntp.local.company.com' ],
+#    restart_service => true,
+#    webservice_name => 'apache',
+#    source_location => '/var/www/gitlist-0.4.2.tar.gz',
 #  }
 #
 # === Authors
 #
-# Author Name <author@domain.com>
+# Eric Shamow <eric@puppetlabs.com>
 #
 # === Copyright
 #
-# Copyright 2014 Your name here, unless otherwise noted.
+# Copyright 2014 Puppet Labs
 #
-#NOTE: REQUIRES APACHE+PHP ALREADY CONFIGURED
 class gitlist (
   $webdir_path       = $gitlist::params::webdir_path,
   $webuser_name      = $gitlist::params::webuser_name,

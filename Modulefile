@@ -1,5 +1,5 @@
 name    'eshamow-gitlist'
-version '0.1.0'
+version '0.1.1'
 source 'https://github.com/eshamow/puppet-gitlist'
 author 'eshamow'
 license 'Apache License, Version 2.0'

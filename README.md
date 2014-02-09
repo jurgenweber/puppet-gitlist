@@ -21,10 +21,10 @@ Module to install/manage gitlist. Intended to pair with eshamow-gitolite for ful
 
 Module to install/manage gitlist. Intended to pair with eshamow-gitolite for full management of git stack. Expects Apache+PHP installed and configured on target node.
 
-Currently supports RHEL or CentOS 6 only. Future targets:
+Currently supports RHEL or CentOS 6 and Debian 6 only. Future targets:
 
-RHEL 5 or 6
-Debian 6 or 7
+RHEL 5
+Debian 7
 Ubuntu 12.04
 
 ##Setup

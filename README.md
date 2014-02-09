@@ -39,6 +39,7 @@ Ubuntu 12.04
 
 * Expects 'git' binary to be installed/available. puppetlabs-git suffices for most systems.
 * Expects puppetlabs-apache and nanliu-staging
+* IMPORTANT: php and rewrite modules must be enabled
 * By default, intended to work with eshamow-gitolite. Implementation with other systems may vary
 * Nothing about this other than convention makes it Apache-only - would be easy to put in conditionals/support/templates for other webservers
   

@@ -1,3 +1,6 @@
+#
+#
+#
 class gitlist::params {
   $restart_service   = false
   $git_client_path   = '/usr/bin/git'
